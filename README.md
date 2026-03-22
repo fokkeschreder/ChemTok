@@ -14,7 +14,9 @@ TikTok for chemical reactions. Swipe through reactions, see reactants, guess the
 
 ## Data pipeline
 
-We built a database of 543 augmented chemical reactions from two open sources:
+**Current status:** 543 augmented reactions in production. The full merged database has 1.68M reactions — we're iterating on the LLM augmentation prompt before scaling up to process all of them (~$400 on Groq).
+
+We built a database from two open sources:
 
 | Source | Reactions | License |
 |--------|-----------|---------|
