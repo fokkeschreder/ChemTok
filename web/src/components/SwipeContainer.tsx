@@ -39,6 +39,7 @@ export function SwipeContainer({ isFavorite, onToggleFavorite, dark }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
   const startY = useRef(0);
   const tracking = useRef(false);
+  const lastWheelTime = useRef(0);
 
   // Initial load — from URL param or first reaction
   useEffect(() => {
@@ -118,14 +119,27 @@ export function SwipeContainer({ isFavorite, onToggleFavorite, dark }: Props) {
       else if (dy > 40) goPrev();
     };
 
+    const onWheel = (e: WheelEvent) => {
+      const now = Date.now();
+      if (now - lastWheelTime.current < 600 || animating) return;
+      
+      if (Math.abs(e.deltaY) > 20) {
+        if (e.deltaY > 0) goNext();
+        else goPrev();
+        lastWheelTime.current = now;
+      }
+    };
+
     el.addEventListener("touchstart", onTouchStart, { passive: true });
     el.addEventListener("touchmove", onTouchMove, { passive: false });
     el.addEventListener("touchend", onTouchEnd, { passive: true });
+    el.addEventListener("wheel", onWheel, { passive: true });
 
     return () => {
       el.removeEventListener("touchstart", onTouchStart);
       el.removeEventListener("touchmove", onTouchMove);
       el.removeEventListener("touchend", onTouchEnd);
+      el.removeEventListener("wheel", onWheel);
     };
   }, [animating, goNext, goPrev]);
 
@@ -148,13 +162,6 @@ export function SwipeContainer({ isFavorite, onToggleFavorite, dark }: Props) {
     );
   }
 
-  const animClass =
-    animating === "up"
-      ? "animate-slide-up"
-      : animating === "down"
-        ? "animate-slide-down"
-        : "";
-
   return (
     <div
       ref={containerRef}
@@ -165,13 +172,14 @@ export function SwipeContainer({ isFavorite, onToggleFavorite, dark }: Props) {
         #{current.id} of {total}
       </div>
 
-      <div className={`w-full max-w-md ${animClass}`}>
+      <div className="w-full max-w-2xl px-2">
         <ReactionCard
           key={current.id}
           reaction={current}
           isFavorite={isFavorite(current.id)}
           onToggleFavorite={() => onToggleFavorite(current.id)}
           dark={dark}
+          animating={animating}
         />
       </div>
 

@@ -47,7 +47,7 @@ export function MoleculeRenderer({ smiles, dark = false }: Props) {
   return (
     <span
       ref={containerRef}
-      className="inline-flex items-center justify-center w-[140px] h-[100px] sm:w-[160px] sm:h-[120px]"
+      className="inline-flex items-center justify-center w-[210px] h-[150px] sm:w-[240px] sm:h-[180px]"
     />
   );
 }

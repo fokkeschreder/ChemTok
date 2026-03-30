@@ -9,7 +9,7 @@ export function MoleculeGroup({ smiles, dark }: Props) {
   const parts = smiles.split(".");
 
   return (
-    <div className="flex items-center justify-center gap-1 flex-wrap">
+    <div className="flex items-center justify-center gap-1 flex-nowrap overflow-x-auto max-w-full pb-2 scrollbar-none">
       {parts.map((smi, i) => (
         <div key={i} className="flex items-center gap-1">
           {i > 0 && (

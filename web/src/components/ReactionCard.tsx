@@ -23,6 +23,7 @@ interface Props {
   isFavorite: boolean;
   onToggleFavorite: () => void;
   dark?: boolean;
+  animating?: "up" | "down" | null;
 }
 
 function JsonBlock({ label, data }: { label: string; data: string }) {
@@ -62,8 +63,16 @@ export function ReactionCard({
   isFavorite,
   onToggleFavorite,
   dark,
+  animating,
 }: Props) {
   const [debugOpen, setDebugOpen] = useState(false);
+
+  const animClass =
+    animating === "up"
+      ? "animate-slide-up"
+      : animating === "down"
+        ? "animate-slide-down"
+        : "";
 
   const title =
     reaction.named_reaction && reaction.named_reaction !== "none"
@@ -128,32 +137,28 @@ export function ReactionCard({
             </div>
           </div>
 
-          {/* Reactants */}
-          <div className="flex justify-center shrink-0">
-            <MoleculeGroup smiles={reaction.reactants} dark={dark} />
+          <div className={`flex flex-col flex-1 justify-center gap-2 mt-4 ${animClass}`}>
+            {/* Reactants */}
+            <div className="flex justify-center shrink-0">
+              <MoleculeGroup smiles={reaction.reactants} dark={dark} />
+            </div>
+
+            {/* Arrow + Conditions */}
+            <div className="flex flex-col items-center shrink-0">
+              <div className="text-xl text-muted-foreground select-none">↓</div>
+              {reaction.conditions && (
+                <p className="text-xs text-muted-foreground italic text-center px-4 leading-snug">
+                  {reaction.conditions}
+                </p>
+              )}
+            </div>
+
+            {/* Product */}
+            <div className="flex justify-center shrink-0">
+              <MoleculeGroup smiles={reaction.product} dark={dark} />
+            </div>
           </div>
 
-          {/* Arrow + Conditions */}
-          <div className="flex flex-col items-center shrink-0">
-            <div className="text-xl text-muted-foreground select-none">↓</div>
-            {reaction.conditions && (
-              <p className="text-xs text-muted-foreground italic text-center px-4 leading-snug">
-                {reaction.conditions}
-              </p>
-            )}
-          </div>
-
-          {/* Product */}
-          <div className="flex justify-center shrink-0">
-            <MoleculeGroup smiles={reaction.product} dark={dark} />
-          </div>
-
-          {/* Notes */}
-          {reaction.notes && (
-            <p className="text-xs text-muted-foreground text-center px-2 shrink-0">
-              {reaction.notes}
-            </p>
-          )}
         </CardContent>
       </Card>
 

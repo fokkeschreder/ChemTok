@@ -27,7 +27,6 @@ export default function App() {
 
       {/* Footer */}
       <footer className="text-center text-xs text-muted-foreground pb-4 px-4 space-y-1">
-        <div>Swipe up for next &middot; Swipe down for previous</div>
         <div>
           Feedback? <a href="mailto:phil@chemtok.org" className="underline hover:text-foreground">phil@chemtok.org</a>
         </div>
