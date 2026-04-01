@@ -3,7 +3,7 @@ Augment reaction database with LLM-generated metadata.
 
 Reads from a source db, processes each reaction through an LLM,
 writes results to a new augmented db.
-Uses Groq SDK with qwen/qwen3-32b by default.
+Uses OpenRouter with google/gemini-2.5-flash-lite by default.
 """
 
 import json
@@ -15,15 +15,18 @@ import time
 from pathlib import Path
 
 from dotenv import load_dotenv
-from groq import Groq
+from openai import OpenAI
 from tqdm import tqdm
 
 load_dotenv()
 
-MODEL = os.getenv("LLM_MODEL", "qwen/qwen3-32b")
+MODEL = os.getenv("LLM_MODEL", "google/gemini-2.5-flash-lite")
 PROMPT_FILE = Path(__file__).parent / "data_augmentation_prompt.md"
 
-client = Groq()
+client = OpenAI(
+    base_url="https://openrouter.ai/api/v1",
+    api_key=os.getenv("OPENROUTER_API_KEY"),
+)
 
 # JSON schema for Groq structured output
 RESPONSE_SCHEMA = {
@@ -105,9 +108,8 @@ def call_llm(system_prompt: str, user_prompt: str) -> dict | None:
                 {"role": "user", "content": user_prompt},
             ],
             temperature=0.6,
-            max_completion_tokens=4096,
+            max_tokens=4096,
             top_p=0.95,
-            reasoning_effort="none",
             response_format={"type": "json_object"},
         )
         content = completion.choices[0].message.content or ""
